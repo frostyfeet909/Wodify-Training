@@ -14,14 +14,14 @@ def get_data() -> Generator[str, None, None]:
     """Get the HTML data from the calendar files."""
     data_dir = Path(__file__).parent.parent/ "data" / "calendar"
     for file in data_dir.iterdir():
-        with file.open() as f:
-            yield f.read()
+        if file.suffix == ".html":
+            with file.open() as f:
+                if content := f.read():
+                    yield content
 
 
 def scrape_data(html: str) -> list[dto.RawWorkout]:
     """Scrape the workout data from the HTML."""
-    if not html:
-        return []
     soup = BeautifulSoup(html, "html.parser")
 
     rows = soup.find("tbody").find_all("tr")  # type: ignore[reportAttributeAccessIssue]
